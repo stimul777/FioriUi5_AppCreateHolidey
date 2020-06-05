@@ -1,0 +1,44 @@
+<core:FragmentDefinition
+	id="fragmentIdCarry"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:t="sap.ui.table">
+	<Dialog contentHeight = "50%" contentWidth="450px">
+		<content>
+			<NavContainer id="carryContainer"  class = "testClazz" >
+				<pages>
+					<Page
+					 id="selectTypeCarry">
+					 	<content>
+						 	<RadioButtonGroup id="groupButCarry" columns="1" buttons="{/}" width="500px" class="sapUiMediumMarginBottom">
+								<RadioButton text="{Buttons}" />
+							</RadioButtonGroup>
+					 	</content>
+					</Page>
+					<Page
+					 id="tableResultCarryPage">
+					 	<content>
+						 	<t:Table 
+						 	id="tableResultCarry">
+						 	<t:columns>
+						 		<t:Column>
+									<Label text="{i18n>new_status}" />
+									<t:template>
+										<Text text="{StatusNew}" />
+									</t:template>
+								</t:Column>
+						 	</t:columns>
+						 	</t:Table>
+					 	</content>
+					</Page>
+				</pages>
+			</NavContainer>
+		</content>
+		<beginButton>
+		<Button id="nextFragmentBut" text="{i18n>Next}" press="nextPageCarry"/>	
+		</beginButton>
+	   	<endButton>
+	   	<Button id="cancelFragmentBut" text="{i18n>Cancel}" />	
+	   	</endButton>
+	</Dialog>
+</core:FragmentDefinition> 

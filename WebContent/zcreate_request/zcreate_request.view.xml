@@ -1,0 +1,375 @@
+<core:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+			controllerName="zcreate_request.zcreate_request" xmlns:html="http://www.w3.org/1999/xhtml"
+			xmlns:u="sap.ui.unified"
+			xmlns:form="sap.ui.layout.form"
+			xmlns:utable="sap.ui.table"
+			xmlns:semantic="sap.m.semantic">
+		<SplitContainer id="mainSplitCont" initialDetail="mainDetailPage" initialMaster="mainMasterPage">
+		<masterPages>
+			<Page title="{i18n>list_appliacation}" class="masterPageClass" id="mainMasterPage">
+				<content>
+						<List
+							id="listApplication"
+							items="{/AllRequestsTypeToolSet}"
+							includeItemInSelection="true">
+							<items>
+								<ObjectListItem
+									title="{TypeText}"
+									type="Active"
+									number="{IdApp}"
+									numberUnit="{Begda}-{Endda}">
+									<firstStatus>
+										<ObjectStatus
+											text="{StatusText}"/>
+									</firstStatus>
+								</ObjectListItem>
+							</items>
+						</List>
+				</content>
+				<footer>
+				<OverflowToolbar width="100%" >
+					<content>
+						<ToolbarSpacer/>
+						<Button id="createRequestButMobile" enabled="true" 
+								text="{i18n>create_request}" type="Accept"
+								icon="sap-icon://create-entry-time" press="goToDetail" class="sapUiHideOnDesktop">	
+						</Button>
+					</content>
+				</OverflowToolbar>
+				</footer>
+			</Page>
+		</masterPages>
+		<detailPages>
+			<Page
+				id="mainDetailPage" showNavButton="true"
+				navButtonText="Back" navButtonPress="onPressDetailBack">
+				<content>
+					<NavContainer id="mainNavContainer">
+						<pages>
+							<Page id="wizardContentPage" title="Создание заявки">
+								<content>
+									<Wizard id="requestWizard"
+											enableBranching="true"
+											complete="wizardCompletedHandler"
+											showNextButton="false">
+										<WizardStep id="TypeRequestStep"
+													complete="defineNextStep"
+													subsequentSteps="DataRequestStep, changeModeWorkStep"
+													title="{i18n>Choose_type_of_requests}"
+													icon="sap-icon://arrow-down"> 
+											<RadioButtonGroup id="typeRequestGroup" columns="2" width="100%" class="sapUiMediumMarginBottom" select="changeDataComboBox">
+												<buttons>
+													<RadioButton id="requestAbsence" text="Заявки отсутствия" enabled="true"/>
+													<RadioButton id="changeModeWork" text="Изменение режима работы"/>
+												</buttons>
+											</RadioButtonGroup>	
+											<ComboBox
+												width= "30%"
+												id="typeRequest"
+												change="categoryDefinitionApplication">
+											</ComboBox>	
+										</WizardStep>
+										<WizardStep 
+											nextStep="CommentRequestStep"
+											id="changeModeWorkStep"
+											title="{i18n>change_mode_work}"
+											icon="sap-icon://citizen-connect">
+											<form:SimpleForm editable="true" class="dataReqForm" id="changeModeWorkForm">
+											
+												<Label visible="false" id="labelDataChangeWork" text="{i18n>Date}" required="true" class="dataReqLabel"/>
+												<DatePicker
+													visible="false"
+													width="60%"
+													id="inputDataChangeWork"
+													change="createFiltersForClock">
+												</DatePicker>
+												
+												<Label visible="false" id="labelLocationTrip" text="{i18n>Business_trip_location}" required="true" class="dataReqLabel"/>
+												<Input
+													visible="false"
+													width="60%"
+													id="inputLocationTrip">
+												</Input>
+												
+												<Label visible="true" id="labelGDVrule" text="{i18n>GDV_rule}" required="true" class="dataReqLabel"/>
+												<ComboBox
+													visible="true"
+													width= "60%"
+													id="typeGDVrule"
+													items="{/ScheduleWorkTimeSet}"
+													showSecondaryValues="true">	
+													 <core:ListItem key="{Schkz}" text="{Rtext}"/>
+												</ComboBox>
+												
+												<Label visible="true" id="labelDataFromChangeWork" text="{i18n>Date_From}" required="true" class="dataReqLabel"/>
+												<DatePicker
+													visible="true"
+													width="60%"
+													id="inputDataFromChangeWork"
+													change="createFiltersForClock">
+												</DatePicker>
+												
+												<Label visible="true" id="labelDataFOnChangeWork" text="{i18n>Date_On}" required="true" class="dataReqLabel"/>
+												<DatePicker
+													visible="true"
+													width="60%"
+													id="inputDataOnChangeWork"
+													change="createFiltersForClock">
+												</DatePicker>
+												
+												<Label visible="false" id="labelProcessingDateChangeWork" text="{i18n>Processing_date}" required="true" class="dataReqLabel"/>
+												<DatePicker
+													visible="false"
+													width="60%"
+													id="inputProcessingDateChangeWork"
+													change="createFiltersForClock">
+												</DatePicker>
+												
+												<Label visible="false" id="labelClockChangeWork" text="{i18n>clock}" required="true" class="dataReqLabel"/>
+												<ComboBox
+													visible="false"
+													width="60%"
+													id="inputClockChangeWork"
+													type="Number">
+												</ComboBox>
+												<Label visible="false" id="labelNameOrganization" text="{i18n>Name_of_organization}" required="true" class="dataReqLabel"/>
+												<Input
+													visible="false"
+													width="60%"
+													id="inputNameOrganization">
+												</Input>
+												<Label visible="false" id="labelPurposeTrip" text="{i18n>Purpose_of_the_trip}" required="true" class="dataReqLabel"/>
+												<Input
+													visible="false"
+													width="60%"
+													id="inputPurposeTrip">
+												</Input>
+												<Label visible="false" id="labelProjFactChangeWork" text="{i18n>name_project}" required="true" class="dataReqLabel"/>
+												<MultiInput
+													visible="false"
+													width="60%"
+													id="inputFactProjChangeWork"
+													showSuggestion="true"
+													showValueHelp="true"
+													valueHelpRequest="openListProj">
+												</MultiInput>
+												<Label visible="false" id="labelAbsencePeriod" text="{i18n>Employee_Absence_Period}" required="false" class="dataReqLabel"/>
+												<utable:Table
+													visible="false"
+													width="60%"
+													id="tableAbsencePeriod"
+													selectionMode="None"
+													visibleRowCount="3"
+													paste="onPaste">
+													<utable:columns>
+														<utable:Column>
+															<Label text="{i18n>Date}"/>
+															<utable:template>
+																<Label text="{Workdate}"/>
+															</utable:template>
+														</utable:Column>
+														<utable:Column>
+															<Label text="{i18n>Awart}"/>
+															<utable:template>
+																<Label text="{Awart}"/>
+															</utable:template>
+														</utable:Column>
+														<utable:Column>
+															<Label text="{i18n>clock}"/>
+															<utable:template>
+																<Label text="{Catshours}"/>
+															</utable:template>
+														</utable:Column>
+													</utable:columns>
+												</utable:Table>	
+											</form:SimpleForm>
+										</WizardStep>
+										<WizardStep id="DataRequestStep"
+													nextStep="CommentRequestStep"
+													title="{i18n>Application_data}"
+													icon="sap-icon://request">
+
+											<form:SimpleForm editable="true" class="dataReqForm" id="dataRequestForm">
+												<Label visible="false" id="labelIdRequest" text="{i18n>id_request}" required="true" class="dataReqLabel"/>
+												<Input
+													visible="false"
+													width="60%"
+													id="inputRequestId"
+													type="Number"
+													showSuggestion="true"
+													showValueHelp="true"
+													valueHelpRequest="openApplicationDialog">
+												</Input>
+												<Label visible="false" id="typeRequestLabel" text="{i18n>type_request}" required="false" class="dataReqLabel"/>
+												<Input
+													visible="false"
+													width="60%"
+													id="typeRequestInput"
+													enabled="false">
+												</Input>
+												<Label visible="false" id="labelPernrToForm" text="{i18n>Employee_employee_number}" required="true" class="dataReqLabel"/>
+												<Input
+												visible="false"
+													width="60%"
+													id="inputPernr"
+													type="Number"
+													showSuggestion="true"
+													showValueHelp="true"
+													valueHelpRequest="openListEMPDialog">
+												</Input>
+												<Label visible="false" id="labelPresence" text="{i18n>Presence}" required="true" class="dataReqLabel"/>
+												<ComboBox
+													visible="false"
+													width= "60%"
+													id="typePresence">
+													 <items>
+												        <core:Item key="9006" text="{i18n>Paid_study_leave}"/>
+												        <core:Item key="9007" text="{i18n>Unpaid_study_leave}"/>
+												     </items>		
+												</ComboBox>
+												<Label id="labelDateProcessing" text="{i18n>Processing_date}" required="true" class="dataReqLabel"/>
+												<DatePicker
+													width="60%"
+													id="inputDateProcessing"
+													change="createFiltersForClock">
+												</DatePicker>
+												<Label id="labelDateFrom" text="{i18n>Date_From}" required="true" class="dataReqLabel"/>
+												<DatePicker
+													width="60%"
+													id="inputDateFrom"
+													change="createFiltersForClock">
+												</DatePicker>
+												<Label id="labelDateOn" text="{i18n>Date_On}" required="true" class="dataReqLabel"/>
+												<DatePicker
+													width="60%"
+													id="inputDateOn"
+													change="createFiltersForClock">
+												</DatePicker>
+												<Label id="clockLabel" text="{i18n>clock}" required="true" class="dataReqLabel"/>
+												<ComboBox
+													width="60%"
+													id="inputClock">
+												</ComboBox>
+												<Label visible="false" id="RuntimeLabel" text="{i18n>Retired_time}" required="false" class="dataReqLabel"/>
+												<utable:Table
+													visible="false"
+													width="60%"
+													id="runtimeTable"
+													selectionMode="None"
+													visibleRowCount="3"
+													paste="onPaste">
+												</utable:Table>	
+
+												<!-- yyd образец заявления -->
+												<Label visible="true" id="labelLoadRequestPrototype" text="Образец заявления" required="false" class="dataReqLabel"/>
+												<Button visible="false" id="ButtonPrototypeDownload" enabled="true" text="Скачать образец" type="Reject" icon="sap-icon://save" width="50%" press=""></Button>
+												
+												<!-- END- yyd образец заявления  -->
+												<!-- загрузка файла -->
+												<Label visible="false" id="labelLoadRequest" text="{i18n>Download_the_application}" required="true" class="dataReqLabel"/>
+												<UploadCollection 
+													id="uploadLoadRequest" 
+													visible="false" 
+													class="customCollection"
+													change="onChangeUploadCollection"
+													uploadUrl="/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet"
+													beforeUploadStarts="StartLoad"
+													uploadComplete="onUploadComplete"
+													instantUpload="false">
+												</UploadCollection>
+												<!-- END - Загрузка файла-->
+												<Label visible="false" id="labelFactProj" text="{i18n>Actual_project}" required="false" class="dataReqLabel"/>
+												<MultiInput
+													visible="false"
+													width="60%"
+													id="inputFactProj"
+													showSuggestion="true"
+													showValueHelp="true"
+													valueHelpRequest="openListProj">
+												</MultiInput>
+											</form:SimpleForm>
+
+									
+										</WizardStep>
+										<WizardStep id="CommentRequestStep"
+													title="{i18n>Comments_on_the_application}"
+													icon="sap-icon://tag-cloud-chart">
+											<FeedInput
+												id="feedInputComment"
+												post="onPost"
+												icon="sap-icon://user-edit"
+												class="sapUiSmallMarginTopBottom" />
+											<List
+												id="listComment"
+												showSeparators="Inner">
+											</List>
+										</WizardStep>
+									</Wizard>
+								</content>
+								<footer>
+									<OverflowToolbar width="100%" >
+										<content>
+											<ToolbarSpacer/>
+											<Button id="downButton" enabled="false" text="{i18n>back_step}" type="Reject" icon="sap-icon://undo" press="downStep">	
+											</Button>
+											<Button id="nextButton" text="{i18n>next_step}" type="Accept" icon="sap-icon://open-command-field" press="nextStep">	
+											</Button>
+										</content>
+									</OverflowToolbar>
+								</footer>
+							</Page>
+							<Page id="reviewPage" title="Создание заявки" class="reviewPageClass">
+							<content>
+								<form:SimpleForm
+										id="typeRequestReviewForm"
+										title="{i18n>type_request}"
+										minWidth="1024"
+										editable="false"
+										layout="ResponsiveGridLayout"
+										class="customReviewForm">
+									<form:content>
+										<Link press="editStepOne" text="{i18n>Edit}" />
+									</form:content>
+								</form:SimpleForm>
+				
+								<form:SimpleForm
+										id="applicationDataReview"
+										title="{i18n>Application_data}"
+										minWidth="1024"
+										editable="false"
+										layout="ResponsiveGridLayout"
+										class="customReviewForm">
+									<form:content>
+										<Link press="editStepTwo" text="{i18n>Edit}" />
+									</form:content>
+								</form:SimpleForm>
+				
+								<form:SimpleForm
+										id="commentReview"
+										title="{i18n>Comments_on_the_application}"
+										minWidth="1024"
+										editable="false"
+										layout="ResponsiveGridLayout"
+										class="customReviewForm">
+									<form:content>
+										<Link press="editStepThree" text="{i18n>Edit}" />
+									</form:content>
+								</form:SimpleForm>
+							</content>
+							<footer>
+							<OverflowToolbar width="100%" >
+								<content>
+									<ToolbarSpacer/>
+									<Button id="createRequestBut" enabled="true" text="{i18n>create_request}" type="Accept" icon="sap-icon://create-entry-time" press="createRequestDetermineCategory">	
+									</Button>
+								</content>
+							</OverflowToolbar>
+							</footer>
+							</Page>
+						</pages>
+					</NavContainer>
+				</content>
+			</Page>
+		</detailPages>
+	</SplitContainer>
+</core:View>

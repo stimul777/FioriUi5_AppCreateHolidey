@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+
+		<script src="resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-theme="sap_bluecrystal"
+				data-sap-ui-resourceroots='{ "sap.myApps" : "./" }'
+				>
+		</script>
+		<!-- only load the mobile lib "sap.m" and the "sap_bluecrystal" theme -->
+
+		<script>
+				sap.ui.localResources("zcreate_request");
+				var app = new sap.m.App({initialPage:"idzcreate_request1"});
+				var page = sap.ui.view({id:"idzcreate_request1", viewName:"zcreate_request.zcreate_request", type:sap.ui.core.mvc.ViewType.XML});
+				app.addPage(page);
+				app.placeAt("content");
+				sap.ui.getCore().attachInit(function () {
+		            new sap.ui.core.ComponentContainer({
+		               name : "sap.myApps"
+		            }).placeAt("content"); 
+
+			         });
+				var link = window.location.origin + '/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/';
+				var parseListModel;
+				var empListMain;
+				var requestAbsenceCollection;
+				var changeModeWorkCollection;
+				var oModel =  new sap.ui.model.odata.ODataModel(link,false);
+				var FullName;
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="content"></div>
+	</body>
+</html>

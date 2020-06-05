@@ -1,0 +1,17 @@
+.dataReqForm > div > div > div{
+	background: transparent !important;
+}
+.customCollection{
+	width:60%;
+}
+.reviewPageClass{
+	background-color:#FAFAFA;
+}
+.customReviewForm > div > div > div{
+    background: transparent !important;
+}
+.testClazz {
+
+position: inherit !important;;
+
+}
