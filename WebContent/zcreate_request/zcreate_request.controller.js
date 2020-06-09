@@ -920,15 +920,12 @@ sap.ui.define([
 			});
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 			MessageToast.show("Файл успешно загружен!");
-
+			// токен выносится в глобальную область видимости, для валидации файла
 			window._globals = {
 				csrfTokenAdd: csrfToken
 			}
 			console.log('глобальный токен: ',  _globals.csrfTokenAdd )
-
 		},
-		
-
 		
 ////////////////////////////////////////////////////////////////////Функция при изменении(добав/удал) UploadCollection КОНЕЦ		
 
@@ -942,19 +939,50 @@ sap.ui.define([
 			var fileLinkTwo = window.location.origin + '/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet';
 			oUploadCollection.setUploadUrl(fileLink, fileLinkTwo);
 			console.log('длинна файлов: :', cFiles);
-
 			if (cFiles > 0) {
 				console.log("внутри проверки")
 				oUploadCollection.upload();
 				MessageToast.show("Method Upload is called (" + uploadInfo + ")");
 			} 
-		
 		},
-////////////////////////////////////////////////////////////////////Функция для загрузки файла при создании заявки КОНЕЦ		
+////////////////////////////////////////////////////////////////////Функция для загрузки файла при создании заявки КОНЕЦ	
+
+///////////////////////////////////////////////////////////////////Функция для скачивания образца заявления НАЧАЛО
+		DownloadSampleDocument: function() {
+			console.log('КНОПКА СКАЧАТЬ НАЖАТА');
+
+			var oView = this.getView();
+			var typeRequest = oView.byId("typeRequest");
+			var selectItem= typeRequest.getSelectedItem();
+			var SampleDocument= {};
+			var jsonmod  = new sap.ui.model.json.JSONModel(SampleDocument);
+
+			oModel.read("/FileSet('Gos.docx')/$value", null, null, false, function(oData, oResponse) {
+				SampleDocument = oData.results;
+			});
+
+			console.log("JSON пришедший:", jsonmod);
+			console.log("ШАБЛОНЫ модель:", SampleDocument);
 		
+
+			switch(selectItem.getKey()){
+				case '15': console.log('КЕЙС-15');break;
+				case '17':  console.log('КЕЙС-17'); break;
+				case '16':	console.log('КЕЙС-16'); break;
+				case'23' :  console.log('КЕЙС-23'); break;
+					// default:
+				// if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")){
+				// 	return true;
+				// }else{
+				// 	return false;	
+				// }
+				// break;
+			}	 	
+		},
+	///////////////////////////////////////////////////////////////////Функция для скачивания образца заявления КОНЕЦ
+
 ////////////////////////////////////////////////////////////////////Функция для загрузки файла НАЧАЛО
 		StartLoad:function(oEvent){
-			
 			var csrfToken = this.getView (). getModel (). oHeaders ['x-csrf-token'];
 			var oUploadCollection = this.getView().byId("uploadLoadRequest");
 			var oCustomerHeaderSlug = new UploadCollectionParameter({
@@ -2184,6 +2212,8 @@ sap.ui.define([
 
 			 });
 			var messageModel= new sap.ui.model.json.JSONModel(message);
+
+
 			if (message.length>0){
 				if(message[0].Labels==""){
 					message.forEach(function(item, j, parseListModel){
@@ -2719,6 +2749,7 @@ sap.ui.define([
 			 });
 			UserTable.bindRows("/");
 			var localEMPLModel  = new sap.ui.model.json.JSONModel(empListMain);
+			console.log("Диалоговое окно для выбора пользователя:", localEMPLModel);
 			UserTable.setModel(localEMPLModel);
 			
 			var TableForm = new sap.ui.layout.form.SimpleForm(
@@ -3032,6 +3063,9 @@ sap.ui.define([
 			 });
 			tableCarry.bindRows("/");
 			var carryListModel  = new sap.ui.model.json.JSONModel(carryList);
+
+			console.log("Данные таблицы пересечения :", carryListModel);
+
 			tableCarry.setModel(carryListModel);
 		},
 /////////////////////////////////////////////////////////////////////////Функция для изменения данных в таблицы пересечения КОНЕЦ		

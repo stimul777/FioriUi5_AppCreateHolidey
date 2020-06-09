@@ -262,7 +262,7 @@
 
 												<!-- yyd образец заявления -->
 												<Label visible="true" id="labelLoadRequestPrototype" text="Образец заявления" required="false" class="dataReqLabel"/>
-												<Button visible="false" id="ButtonPrototypeDownload" enabled="true" text="Скачать образец" type="Reject" icon="sap-icon://save" width="50%" press=""></Button>
+												<Button visible="false" id="ButtonPrototypeDownload" enabled="true" text="Скачать образец" type="Reject" icon="sap-icon://save" width="50%" press="DownloadSampleDocument"></Button>
 												
 												<!-- END- yyd образец заявления  -->
 												<!-- загрузка файла -->
