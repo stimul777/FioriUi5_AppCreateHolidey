@@ -924,7 +924,6 @@ sap.ui.define([
 			window._globals = {
 				csrfTokenAdd: csrfToken
 			}
-			console.log('глобальный токен: ',  _globals.csrfTokenAdd )
 		},
 		
 ////////////////////////////////////////////////////////////////////Функция при изменении(добав/удал) UploadCollection КОНЕЦ		
@@ -936,47 +935,38 @@ sap.ui.define([
 			var uploadInfo = cFiles + " file(s)";
 			var fileLink = window.location.origin + '/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet';
 			// Это клон заявления. Нужен для того, чтобы в сапе не отваливалась заявка
-			var fileLinkTwo = window.location.origin + '/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet';
-			oUploadCollection.setUploadUrl(fileLink, fileLinkTwo);
-			console.log('длинна файлов: :', cFiles);
-			if (cFiles > 0) {
-				console.log("внутри проверки")
-				oUploadCollection.upload();
-				MessageToast.show("Method Upload is called (" + uploadInfo + ")");
-			} 
+			// var fileLinkTwo = window.location.origin + '/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet';
+			oUploadCollection.setUploadUrl(fileLink);
+			// oUploadCollection.setUploadUrl(fileLink, fileLinkTwo);
+			oUploadCollection.upload();
+			MessageToast.show("Method Upload is called (" + uploadInfo + ")");
+
+			// if (cFiles > 0) {
+			
+			// } 
 		},
 ////////////////////////////////////////////////////////////////////Функция для загрузки файла при создании заявки КОНЕЦ	
 
 ///////////////////////////////////////////////////////////////////Функция для скачивания образца заявления НАЧАЛО
 		DownloadSampleDocument: function() {
-			console.log('КНОПКА СКАЧАТЬ НАЖАТА');
-
 			var oView = this.getView();
 			var typeRequest = oView.byId("typeRequest");
 			var selectItem= typeRequest.getSelectedItem();
-			var SampleDocument= {};
-			var jsonmod  = new sap.ui.model.json.JSONModel(SampleDocument);
-
-			oModel.read("/FileSet('Gos.docx')/$value", null, null, false, function(oData, oResponse) {
-				SampleDocument = oData.results;
-			});
-
-			console.log("JSON пришедший:", jsonmod);
-			console.log("ШАБЛОНЫ модель:", SampleDocument);
+			// прямые ссылки на шаблоны заявлений
+			var сivilServiceTemplate = "/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet('Gos.docx')/$value";
+			var dayOffTemplate = "/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet('VacationExpense.docx')/$value";
+			var vacationTemplate = "/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet('Vacation.docx')/$value";
 		
-
 			switch(selectItem.getKey()){
-				case '15': console.log('КЕЙС-15');break;
-				case '17':  console.log('КЕЙС-17'); break;
-				case '16':	console.log('КЕЙС-16'); break;
-				case'23' :  console.log('КЕЙС-23'); break;
-					// default:
-				// if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")){
-				// 	return true;
-				// }else{
-				// 	return false;	
-				// }
-				// break;
+				// отпуск за свой счет
+				case '15': sap.m.URLHelper.redirect(dayOffTemplate,true);
+					break;
+				// отпуск
+				case '16': sap.m.URLHelper.redirect(vacationTemplate,true);
+					break;
+				// гособязанности
+				case '17': sap.m.URLHelper.redirect(сivilServiceTemplate,true); 
+					break;
 			}	 	
 		},
 	///////////////////////////////////////////////////////////////////Функция для скачивания образца заявления КОНЕЦ
@@ -1548,10 +1538,8 @@ sap.ui.define([
 		validateAbsenceRequests:function(){
 			// проверка на прикрепленный файл
 			if(!window._globals || window._globals == undefined) {
-				console.log('ТОКЕНА нет: ');
 			}else {
 				var Token = _globals.csrfTokenAdd;
-				console.log('ТОКЕН В ПРОВЕРКЕ: ', Token);
 			}
 			
 			 var oView = this.getView();
@@ -2749,7 +2737,6 @@ sap.ui.define([
 			 });
 			UserTable.bindRows("/");
 			var localEMPLModel  = new sap.ui.model.json.JSONModel(empListMain);
-			console.log("Диалоговое окно для выбора пользователя:", localEMPLModel);
 			UserTable.setModel(localEMPLModel);
 			
 			var TableForm = new sap.ui.layout.form.SimpleForm(
@@ -3063,9 +3050,6 @@ sap.ui.define([
 			 });
 			tableCarry.bindRows("/");
 			var carryListModel  = new sap.ui.model.json.JSONModel(carryList);
-
-			console.log("Данные таблицы пересечения :", carryListModel);
-
 			tableCarry.setModel(carryListModel);
 		},
 /////////////////////////////////////////////////////////////////////////Функция для изменения данных в таблицы пересечения КОНЕЦ		
