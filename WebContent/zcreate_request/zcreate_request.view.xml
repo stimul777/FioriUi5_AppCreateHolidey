@@ -259,11 +259,9 @@
 													visibleRowCount="3"
 													paste="onPaste">
 												</utable:Table>	
-
 												<!-- yyd образец заявления -->
 												<Label visible="true" id="labelLoadRequestPrototype" text="Образец заявления" required="false" class="dataReqLabel"/>
 												<Button visible="false" id="ButtonPrototypeDownload" enabled="true" text="Скачать образец" type="Reject" icon="sap-icon://save" width="50%" press="DownloadSampleDocument"></Button>
-												
 												<!-- END- yyd образец заявления  -->
 												<!-- загрузка файла -->
 												<Label visible="false" id="labelLoadRequest" text="{i18n>Download_the_application}" required="true" class="dataReqLabel"/>
@@ -275,9 +273,12 @@
 													uploadUrl="/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet"
 													beforeUploadStarts="StartLoad"
 													uploadComplete="onUploadComplete"
-													instantUpload="false">
+													instantUpload="true">
 												</UploadCollection>
 												<!-- END - Загрузка файла-->
+												<!-- Иконка об успешной загрузке файла -->
+												<Button id="IconSuccessfulDownloadFile" visible = "false" icon="sap-icon://pushpin-on" text = "Файл прикреплен."></Button>
+												
 												<Label visible="false" id="labelFactProj" text="{i18n>Actual_project}" required="false" class="dataReqLabel"/>
 												<MultiInput
 													visible="false"
@@ -289,7 +290,6 @@
 												</MultiInput>
 											</form:SimpleForm>
 
-									
 										</WizardStep>
 										<WizardStep id="CommentRequestStep"
 													title="{i18n>Comments_on_the_application}"

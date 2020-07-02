@@ -839,7 +839,7 @@ sap.ui.define([
 			 inputPurposeTrip.setValue("");
 			 inputFactProjChangeWork.destroyTokens();
 			 listComment.destroyItems();
-			 
+			
 			 uploadLoadRequest.removeAllHeaderParameters();
 			 uploadLoadRequest.removeAllItems(); 
 			 uploadLoadRequest.removeAllParameters();
@@ -889,8 +889,6 @@ sap.ui.define([
 		},
 //////////////////////////////////////////Функция для перехода на ПЕРВЫЙ шаг создания заявки КОНЕЦ	
 		
-		
-		
 //////////////////////////////////////////Функция для перехода на ВТОРОЙ шаг создания заявки НАЧАЛО
 		toTwoStepWizard:function(){
 			var mainNavContainer = this.byId("mainNavContainer");
@@ -919,11 +917,7 @@ sap.ui.define([
 				value: csrfToken,
 			});
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
-			MessageToast.show("Файл успешно загружен!");
-			// токен выносится в глобальную область видимости, для валидации файла
-			window._globals = {
-				csrfTokenAdd: csrfToken
-			}
+			MessageToast.show("Файл загружается, ждите...")
 		},
 		
 ////////////////////////////////////////////////////////////////////Функция при изменении(добав/удал) UploadCollection КОНЕЦ		
@@ -934,18 +928,44 @@ sap.ui.define([
 			var cFiles = oUploadCollection.getItems().length;
 			var uploadInfo = cFiles + " file(s)";
 			var fileLink = window.location.origin + '/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet';
-			// Это клон заявления. Нужен для того, чтобы в сапе не отваливалась заявка
-			// var fileLinkTwo = window.location.origin + '/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet';
 			oUploadCollection.setUploadUrl(fileLink);
-			// oUploadCollection.setUploadUrl(fileLink, fileLinkTwo);
 			oUploadCollection.upload();
 			MessageToast.show("Method Upload is called (" + uploadInfo + ")");
-
-			// if (cFiles > 0) {
-			
-			// } 
 		},
 ////////////////////////////////////////////////////////////////////Функция для загрузки файла при создании заявки КОНЕЦ	
+
+////////////////////////////////////////////////////////////////////Функция для загрузки файла НАЧАЛО (срабатывает по клику на кнопку "Создать заявку")
+		StartLoad:function(oEvent){
+			var csrfToken = this.getView (). getModel (). oHeaders ['x-csrf-token'];
+			var oUploadCollection = this.getView().byId("uploadLoadRequest");
+			var oCustomerHeaderSlug = new UploadCollectionParameter({
+				name: "slug",
+				value: encodeURIComponent(oEvent.getParameter("fileName"))
+			});
+			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
+			// MessageToast.show("BeforeUploadStarts event triggered.");
+		},
+////////////////////////////////////////////////////////////////////Функция для загрузки файла КОНЕЦ
+
+////////////////////////////////////////////////////////////////////Функция для окончания заргрузки НАЧАЛО
+		onUploadComplete: function(oEvent) {
+			var oUploadCollection =  this.getView().byId("uploadLoadRequest");
+			var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
+				for (var i = 0; i < oUploadCollection.getItems().length; i++) {
+					if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
+						oUploadCollection.removeItem(oUploadCollection.getItems()[i]);
+						break;
+					}
+				}
+
+			MessageToast.show("Файл успешно загружен!");
+			var IconSuccessfulDownloadFile = this.getView().byId("IconSuccessfulDownloadFile");
+			IconSuccessfulDownloadFile.setVisible(true);
+		
+			//Выносится в глобальную область видимости для проверки на то, что файл загружен
+			window.uploadСompletedFile = true;
+		},
+////////////////////////////////////////////////////////////////////Функция для окончания заргрузки КОНЕЦ	
 
 ///////////////////////////////////////////////////////////////////Функция для скачивания образца заявления НАЧАЛО
 		DownloadSampleDocument: function() {
@@ -956,7 +976,7 @@ sap.ui.define([
 			var сivilServiceTemplate = "/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet('Gos.docx')/$value";
 			var dayOffTemplate = "/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet('VacationExpense.docx')/$value";
 			var vacationTemplate = "/sap/opu/odata/sap/ZCREATE_REQUEST_GW_SRV/FileSet('Vacation.docx')/$value";
-		
+
 			switch(selectItem.getKey()){
 				// отпуск за свой счет
 				case '15': sap.m.URLHelper.redirect(dayOffTemplate,true);
@@ -969,37 +989,7 @@ sap.ui.define([
 					break;
 			}	 	
 		},
-	///////////////////////////////////////////////////////////////////Функция для скачивания образца заявления КОНЕЦ
-
-////////////////////////////////////////////////////////////////////Функция для загрузки файла НАЧАЛО
-		StartLoad:function(oEvent){
-			var csrfToken = this.getView (). getModel (). oHeaders ['x-csrf-token'];
-			var oUploadCollection = this.getView().byId("uploadLoadRequest");
-			var oCustomerHeaderSlug = new UploadCollectionParameter({
-				name: "slug",
-				value: encodeURIComponent(oEvent.getParameter("fileName"))
-			});
-			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
-			MessageToast.show("BeforeUploadStarts event triggered.");
-		},
-////////////////////////////////////////////////////////////////////Функция для загрузки файла КОНЕЦ
-
-////////////////////////////////////////////////////////////////////Функция для окончания заргрузки НАЧАЛО
-		onUploadComplete: function(oEvent) {
-			var oUploadCollection =  this.getView().byId("uploadLoadRequest");
-			var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
-			setTimeout(function() {
-				for (var i = 0; i < oUploadCollection.getItems().length; i++) {
-					if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
-						oUploadCollection.removeItem(oUploadCollection.getItems()[i]);
-						break;
-					}
-				}
-				// delay the success message in order to see other messages before
-				MessageToast.show("Event uploadComplete triggered");
-			}.bind(this), 8000);
-		},
-////////////////////////////////////////////////////////////////////Функция для окончания заргрузки КОНЕЦ	
+///////////////////////////////////////////////////////////////////Функция для скачивания образца заявления КОНЕЦ
 
 //////////////////////////////////////////Функция для перехода на ТРЕТИЙ шаг создания заявки НАЧАЛО
 		toThreeStepWizard:function(){
@@ -1536,11 +1526,6 @@ sap.ui.define([
 		
 //////////////////////////Функции для проверки заполненых полей для Заявок Отсутствия НАЧАЛО		
 		validateAbsenceRequests:function(){
-			// проверка на прикрепленный файл
-			if(!window._globals || window._globals == undefined) {
-			}else {
-				var Token = _globals.csrfTokenAdd;
-			}
 			
 			 var oView = this.getView();
 			 var listTypeRequest = oView.byId("typeRequest");
@@ -1572,7 +1557,6 @@ sap.ui.define([
 
 			 var uploadLoadRequest = oView.byId("uploadLoadRequest");
 
-
 			 switch(selectItem.getKey()){
 			 case '13':
 				 if((inputDateProcessing.getValue()!=="")&&(selectItemClock!==null)){
@@ -1582,31 +1566,27 @@ sap.ui.define([
 				 }
 				 break;
 			 case '15':
-				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(selectItemClock!==null)&&(Token!=undefined)){
-					delete _globals['csrfTokenAdd'];
+				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(selectItemClock!==null)&&(window.uploadСompletedFile)){
 					 return true;
 				 }else{
 					 return false;	
 				 }
 			 case '17':	 
-				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(selectItemClock!==null)&&(Token!=undefined)){
-					delete _globals['csrfTokenAdd'];
+				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(selectItemClock!==null)&&(window.uploadСompletedFile)){
 					 return true;
 				 }else{
 					 return false;	
 				 }
 				 break;
 			 case '16':	 
-				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(Token!=undefined)){
-					delete _globals['csrfTokenAdd'];
+				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(window.uploadСompletedFile)){
 					return true;
 				 }else{
 					 return false;	
 				 }
 				 break;
 			 case'23':
-				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(typePresence.getSelectedItem()!==null)&&(Token!=undefined)){
-					delete _globals['csrfTokenAdd'];
+				 if((inputDateFrom.getValue()!=="")&&(inputDateOn.getValue()!=="")&&(typePresence.getSelectedItem()!==null)){
 					 return true;
 				 }else{
 					 return false;	
@@ -1727,6 +1707,7 @@ sap.ui.define([
 		validateStep: function (evt) {
 			var flagValidate;
 			var typeRequestGroup = this.getView().byId("typeRequestGroup");
+
 			switch(typeRequestGroup.getSelectedIndex()){
 			case 0:
 				flagValidate=this.validateAbsenceRequests();
@@ -1767,7 +1748,7 @@ sap.ui.define([
 				            var lWarningError = lBundle.getText("Fill_in_all_required_fields");
 							sap.m.MessageToast.show(lWarningError);
 						}
-						break;		
+						break;
 				}
 			}
 			else if(wizard.getCurrentStep()==CommentRequestStep.getId()){
@@ -1970,6 +1951,10 @@ sap.ui.define([
 				this.sendObjToGW(objApplicationSend);
 				 break;
 			 case '15':
+				this.onStartUpload();
+				objApplicationSend=this.createObjObligations(objApplicationSend);  
+				this.sendObjToGW(objApplicationSend);
+				break;
 			 case '17':	 
 				 this.onStartUpload();
 				 objApplicationSend=this.createObjObligations(objApplicationSend);  
@@ -1978,7 +1963,7 @@ sap.ui.define([
 			 case '16':	 
 				 this.onStartUpload();
 				 objApplicationSend=this.createObjHoliday(objApplicationSend);  
-				 this.sendObjToGW(objApplicationSend);
+				 this.sendObjToGW(objApplicationSend);	
 				 break;
 			 case'23':
 				 objApplicationSend=this.createObjHolidayStudy(objApplicationSend); 
@@ -2407,7 +2392,7 @@ sap.ui.define([
 		},	
 //////////////////////////////////////////////////////////////////////////Наполнение таблицы списанного времени КОНЕЦ
 		
-/////////////////////////////////////////////////////////////////////////Йункция для заполнения MultiInput выбранными проектами НАЧАЛО		
+/////////////////////////////////////////////////////////////////////////Функция для заполнения MultiInput выбранными проектами НАЧАЛО		
 		addTokenWidthProjectInput:function(arrListSelectProject,idElement){
 			var inputFactProj = sap.ui.getCore().byId(idElement);
 			var arrProj=arrListSelectProject;
@@ -2424,7 +2409,7 @@ sap.ui.define([
 			}
 			
 		},
-/////////////////////////////////////////////////////////////////////////Йункция для заполнения MultiInput выбранными проектами КОНЕЦ		
+/////////////////////////////////////////////////////////////////////////Функция для заполнения MultiInput выбранными проектами КОНЕЦ		
 		
 /////////////////////////////////////////////////////////////////////////Диалоговое окно для выбора проектов НАЧАЛО		
 		openListProj:function(oEvent){
