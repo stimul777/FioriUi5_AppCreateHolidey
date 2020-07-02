@@ -1945,6 +1945,10 @@ sap.ui.define([
 			objApplicationSend.Project="";
 			objApplicationSend.IDCanceledReq="";
 			objApplicationSend.TypeCode=selectItem.getKey();
+
+			var IconSuccessfulDownloadFile = this.getView().byId("IconSuccessfulDownloadFile");
+			IconSuccessfulDownloadFile.setVisible(false);
+
 			switch(selectItem.getKey()){
 			case '13':
 				objApplicationSend=this.createObjFuturePeriod(objApplicationSend);
